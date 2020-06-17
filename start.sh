@@ -33,8 +33,8 @@ cleanup() {
         print_header "Cleanup. Removing Azure Pipelines agent..."
 
         ./config.sh remove --unattended \
-        --auth PAT \
-        --token $(cat "$AZP_TOKEN_FILE")
+            --auth PAT \
+            --token $(cat "$AZP_TOKEN_FILE")
     fi
 }
 
@@ -51,9 +51,9 @@ print_header "1. Determining matching Azure Pipelines agent..."
 
 AZP_AGENT_RESPONSE=$(
     curl -LsS \
-    -u user:$(cat "$AZP_TOKEN_FILE") \
-    -H 'Accept:application/json;api-version=3.0-preview' \
-    "$AZP_URL/_apis/distributedtask/packages/agent?platform=linux-x64"
+        -u user:$(cat "$AZP_TOKEN_FILE") \
+        -H 'Accept:application/json;api-version=3.0-preview' \
+        "$AZP_URL/_apis/distributedtask/packages/agent?platform=linux-x64"
 )
 
 if echo "$AZP_AGENT_RESPONSE" | jq . >/dev/null 2>&1; then
@@ -79,15 +79,15 @@ trap 'cleanup; exit 143' TERM
 print_header "3. Configuring Azure Pipelines agent..."
 
 ./config.sh --unattended \
---agent "${AZP_AGENT_NAME:-$(hostname)}" \
---url "$AZP_URL" \
---auth negotiate \
---userName "$AZP_USER" \
---password "$AZP_PASSWORD" \
---pool "${AZP_POOL:-Default}" \
---work "${AZP_WORK:-_work}" \
---replace \
---acceptTeeEula &
+    --agent "${AZP_AGENT_NAME:-$(hostname)}" \
+    --url "$AZP_URL" \
+    --auth negotiate \
+    --userName "$AZP_USER" \
+    --password "$AZP_PASSWORD" \
+    --pool "${AZP_POOL:-Default}" \
+    --work "${AZP_WORK:-_work}" \
+    --replace \
+    --acceptTeeEula &
 wait $!
 
 # remove the administrative token before accepting work
